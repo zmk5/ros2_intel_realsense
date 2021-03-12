@@ -14,20 +14,23 @@
 
 # /* Author: Gary Liu */
 import os
-import launch
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from launch_ros.actions import ComposableNodeContainer
-from launch_ros.descriptions import ComposableNode
+
 from ament_index_python.packages import get_package_share_directory
 
+from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration
+
+from launch_ros.actions import Node
+
+
 def generate_launch_description():
+    """Launch simple RealSense camera node."""
     rs_param_dir = LaunchConfiguration(
         'rs_param_dir',
         default=os.path.join(
             get_package_share_directory('realsense_examples'),
             'config',
-            'd455.yaml')
+            'd435.yaml')
     )
     rgbd_node = Node(
         package='realsense_node',
@@ -35,6 +38,6 @@ def generate_launch_description():
         namespace='',
         output='screen',
         parameters=[rs_param_dir],
-        arguments=['/d435i'],
+        arguments=['/d435'],
         )
-    return launch.LaunchDescription([rgbd_node])
+    return LaunchDescription([rgbd_node])

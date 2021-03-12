@@ -15,50 +15,54 @@
 # /* Author: Gary Liu */
 
 import os
-import launch
+
 from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import ThisLaunchFileDir
-from launch_ros.actions import ComposableNodeContainer
-from launch_ros.descriptions import ComposableNode
+
+from launch_ros.actions import Node
+
 
 def generate_launch_description():
+    """Launch multiple RealSense camera devices."""
     # config the serial number and base frame id of each camera
-    camera1_base_frame_id = LaunchConfiguration('base_frame_id', default='camera1_link')
-    camera2_base_frame_id = LaunchConfiguration('base_frame_id', default='camera2_link')
-    camera3_base_frame_id = LaunchConfiguration('base_frame_id', default='camera3_link')
-    camera1_serial_no = LaunchConfiguration('serial_no', default='837212070294')
-    camera2_serial_no = LaunchConfiguration('serial_no', default='819312071869')
-    camera3_serial_no = LaunchConfiguration('serial_no', default='845412111144')
+    camera1_base_frame_id = LaunchConfiguration(
+        'base_frame_id', default='camera1_link')
+    camera2_base_frame_id = LaunchConfiguration(
+        'base_frame_id', default='camera2_link')
+    camera3_base_frame_id = LaunchConfiguration(
+        'base_frame_id', default='camera3_link')
+    camera1_serial_no = LaunchConfiguration(
+        'serial_no', default='837212070294')
+    camera2_serial_no = LaunchConfiguration(
+        'serial_no', default='819312071869')
+    camera3_serial_no = LaunchConfiguration(
+        'serial_no', default='845412111144')
 
 
     camera1_node = Node(
         package='realsense_node',
-        node_executable='realsense_node',
-        node_namespace="/camera1",
+        executable='realsense_node',
+        namespace="/camera1",
         output='screen',
-        parameters=[{'serial_no':camera1_serial_no, 
+        parameters=[{'serial_no':camera1_serial_no,
                     'base_frame_id': camera1_base_frame_id}]
         )
     camera2_node = Node(
         package='realsense_node',
-        node_executable='realsense_node',
-        node_namespace="/camera2",
+        executable='realsense_node',
+        namespace="/camera2",
         output='screen',
         parameters=[{'serial_no':camera2_serial_no, 
                     'base_frame_id': camera2_base_frame_id}]
         )
     camera3_node = Node(
         package='realsense_node',
-        node_executable='realsense_node',
-        node_namespace="/camera3",
+        executable='realsense_node',
+        namespace="/camera3",
         output='screen',
-        parameters=[{'serial_no':camera3_serial_no, 
+        parameters=[{'serial_no':camera3_serial_no,
                     'base_frame_id': camera3_base_frame_id}]
         )
-    return launch.LaunchDescription([camera1_node, camera2_node, camera3_node])
+    return LaunchDescription([camera1_node, camera2_node, camera3_node])

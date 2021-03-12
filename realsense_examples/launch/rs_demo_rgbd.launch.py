@@ -14,24 +14,42 @@
 
 # /* Author: Gary Liu */
 import os
-import launch
-from launch_ros.actions import Node
+
 from ament_index_python.packages import get_package_share_directory
 
+from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration
+
+from launch_ros.actions import Node
+
+
 def generate_launch_description():
-    rviz_config_dir = os.path.join(get_package_share_directory('realsense_examples'), 'config', 'demo_rgbd.rviz')
+    """Launch RealSense RGBD demo."""
+    rs_param_dir = LaunchConfiguration(
+        'rs_param_dir',
+        default=os.path.join(
+            get_package_share_directory('realsense_examples'),
+            'config',
+            'd435.yaml')
+    )
+
+    rviz_config_dir = os.path.join(
+        get_package_share_directory('realsense_examples'), 'config',
+        'demo_rgbd.rviz')
+
     rviz_node = Node(
         package='rviz2',
-        node_executable='rviz2',
-        node_name='rviz2',
+        executable='rviz2',
+        name='rviz2',
         output = 'screen',
         arguments=['-d', rviz_config_dir],
         parameters=[{'use_sim_time': 'false'}]
-        )
+    )
     rgbd_node = Node(
         package='realsense_node',
-        node_executable='realsense_node',
-        node_namespace='',
+        executable='realsense_node',
+        namespace='',
         output='screen',
-        )
-    return launch.LaunchDescription([rviz_node, rgbd_node])
+        parameters=[rs_param_dir],
+    )
+    return LaunchDescription([rviz_node, rgbd_node])

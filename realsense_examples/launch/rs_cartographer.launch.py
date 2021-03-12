@@ -15,83 +15,92 @@
 # /* Author: Gary Liu */
 
 import os
+
 from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import ThisLaunchFileDir
+
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    """Launch RealSense Cartographer."""
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     realsense_prefix = get_package_share_directory('realsense_examples')
-    cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', 
-                                                    default=os.path.join(realsense_prefix, 'config'))
-    configuration_basename = LaunchConfiguration('configuration_basename', default='rs_cartographer.lua')
-
+    cartographer_config_dir = LaunchConfiguration(
+        'cartographer_config_dir',
+        default=os.path.join(realsense_prefix, 'config'))
+    configuration_basename = LaunchConfiguration(
+        'configuration_basename', default='rs_cartographer.lua')
     resolution = LaunchConfiguration('resolution', default='0.05')
-    publish_period_sec = LaunchConfiguration('publish_period_sec', default='1.0')
+    publish_period_sec = LaunchConfiguration(
+        'publish_period_sec', default='1.0')
 
-    rviz_config_dir = os.path.join(get_package_share_directory('realsense_ros'), 'config', 'rs_cartographer.rviz')
+    rviz_config_dir = os.path.join(
+        get_package_share_directory('realsense_ros'), 'config',
+        'rs_cartographer.rviz')
 
     return LaunchDescription([
         DeclareLaunchArgument(
             'cartographer_config_dir',
             default_value=cartographer_config_dir,
-            description='Full path to config file to load'),
-
+            description='Full path to config file to load'
+        ),
         DeclareLaunchArgument(
             'configuration_basename',
             default_value=configuration_basename,
-            description='Name of lua file for cartographer'),
-
+            description='Name of lua file for cartographer'
+        ),
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
-            description='Use simulation (Gazebo) clock if true'),
-
+            description='Use simulation (Gazebo) clock if true'
+        ),
         Node(
             ## Configure the TF of the robot to the origin of the map coordinates
             package='tf2_ros',
-            node_executable='static_transform_publisher',
+            executable='static_transform_publisher',
             output='screen',
             arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom_frame']
-            ),
-
+        ),
         Node(
             package='depthimage_to_laserscan',
-            node_executable='depthimage_to_laserscan_node',
-            node_name='scan',
+            executable='depthimage_to_laserscan_node',
+            name='scan',
             output='screen',
             parameters=[{'output_frame':'d435_link'}],
-            remappings=[('depth','/d435/camera/depth/image_rect_raw'),
-                        ('depth_camera_info', '/d435/camera/depth/camera_info')],
-            ),
-
+            remappings=[
+                ('depth','/d435/camera/depth/image_rect_raw'),
+                ('depth_camera_info', '/d435/camera/depth/camera_info')],
+        ),
         Node(
             package='cartographer_ros',
-            node_executable='cartographer_node',
+            executable='cartographer_node',
             output='log',
             parameters=[{'use_sim_time': use_sim_time}],
-            arguments=['-configuration_directory', cartographer_config_dir, '-configuration_basename', configuration_basename]),
-
+            arguments=[
+                '-configuration_directory', cartographer_config_dir,
+                '-configuration_basename', configuration_basename]
+        ),
         DeclareLaunchArgument(
             'resolution',
             default_value=resolution,
-            description='Resolution of a grid cell in the published occupancy grid'),
-
+            description='Resolution of a grid cell in the published occupancy grid'
+        ),
         DeclareLaunchArgument(
             'publish_period_sec',
             default_value=publish_period_sec,
-            description='OccupancyGrid publishing period'),
-
+            description='OccupancyGrid publishing period'
+        ),
         Node(
             package='cartographer_ros',
-            node_executable='occupancy_grid_node',
-            node_name='occupancy_grid_node',
+            executable='occupancy_grid_node',
+            name='occupancy_grid_node',
             parameters=[{'use_sim_time': use_sim_time}],
-            arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec]),
+            arguments=[
+                '-resolution', resolution,
+                '-publish_period_sec', publish_period_sec]
+        ),
     ])
