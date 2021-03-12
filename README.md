@@ -1,37 +1,41 @@
 # ROS2 Package for Intel&reg; RealSense&trade; Devices
 ## Supported Devices
 * Intel&reg; RealSense&trade; Camera D400-Series
-   - Intel&reg; RealSense&trade; Depth Cameras D415, D435 and D435i
+   - Intel&reg; RealSense&trade; Depth Cameras D415, D435, D435i, D455
 * Intel&reg; RealSense&trade; Tracking Camera T265
+
+**NOTE**: D455 support is an extension of D435i work. Intel has not released a D455 release yet.
 
 ## Installation Instructions
 
 The following instructions were verified with ROS2 Foxy on Ubuntu 20.04.
-The software is verified with ROS2 Dashing on Ubuntu 18.04 also, with the same instructions replacing "foxy" with "dashing".
 
 ### Install Dependencies
-#### 1. Install ROS2 packages [ros-foxy-desktop](https://index.ros.org/doc/ros2/Installation/Linux-Install-Debians/)
 
-#### 2. Install ROS2 dependences
+#### 1. Install Intel RealSense SDK for [Ubuntu](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)
+
+#### 2. Install ROS2 packages [ros-foxy-desktop](https://index.ros.org/doc/ros2/Installation/Linux-Install-Debians/)
+
+#### 3. Install ROS2 dependences
   Currently, we support librealsense master branch.
   ```bash
-  sudo apt-get install ros-foxy-librealsense2
+  sudo apt install ros-foxy-librealsense2
   ```
   * [Intel® RealSense™ SDK 2.0](https://github.com/IntelRealSense/librealsense.git)
   
-#### 3. Install other non-ROS debian packages
+#### 4. Install other non-ROS debian packages
   ```
-  sudo apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev
-  sudo apt-get install -y libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+  sudo apt install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev
+  sudo apt install -y libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
   ```
 <!--
 ### Install ros2_intel_realsense binary packages
   ```
-  sudo apt-get install ros-foxy-realsense-examples ros-foxy-realsense-ros ros-foxy-realsense-msgs ros-foxy-realsense-node
+  sudo apt install ros-foxy-realsense-examples ros-foxy-realsense-ros ros-foxy-realsense-msgs ros-foxy-realsense-node
   ```
   The ros2_intel_realsense packages installation have been completed. You could jump to [Usage Instructions](https://github.com/intel/ros2_intel_realsense#usage-instructions) for executing, you could also install ros2_intel_realsense from source for more features. -->
 
-### Install ros2_intel_realsense From Source
+#### 5. Install ros2_intel_realsense From Source
 ```bash
 # fetch code
 mkdir -p ~/ros2_ws/src
@@ -66,7 +70,7 @@ source ~/ros2_ws/install/local_setup.bash
 
 ## using ros2 run
 cd ~/ros2_ws
-ros2 run realsense_node realsense_node __params:=`ros2 pkg prefix realsense_examples`/share/realsense_ros/config/d435.yaml __ns:=/d435
+ros2 run realsense_node realsense_node __params:=`ros2 pkg prefix realsense_examples`/share/realsense_examples/config/d435.yaml __ns:=/d435
 ## using ros2 launch
 ros2 launch realsense_examples rs_camera.launch.py
 ```
